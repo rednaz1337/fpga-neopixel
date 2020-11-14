@@ -4,7 +4,9 @@ SRC := src
 TARGET := src/top.v
 
 SOURCE_FILES := src/top.v \
-				src/pixeldata.mem
+				src/pixeldata.mem \
+				src/neopixel.v \
+				src/testbench.v
 
 all: $(BUILD)/top.bit
 
