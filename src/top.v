@@ -1,7 +1,7 @@
 `default_nettype none
 `include "src/neopixel.v"
 // clk needs to be about 25MHz
-module main #(parameter NUM_LEDS=64)(input clk, output leds, output led);
+module main #(parameter NUM_LEDS=128)(input clk, output leds, output led);
 
     wire clk;
     wire leds;
@@ -15,6 +15,7 @@ module main #(parameter NUM_LEDS=64)(input clk, output leds, output led);
 
     reg [16:0] anim_reg;
     reg anim_clock;
+    reg [7:0] color_index;
 
     initial begin
         color <= 'hFF0000;
@@ -39,25 +40,24 @@ module main #(parameter NUM_LEDS=64)(input clk, output leds, output led);
         led_reg <= ~led_reg;
         color_clock <= ~color_clock;
         if (color_clock == 1) begin
-           address = address + 1;
-           if (address == NUM_LEDS) begin
-               address <= 0;
-               if (color == 'hFF0000) begin
-                   color <= 'h00FF00;
-               end else if (color == 'h00FF00) begin
-                   color <= 'h0000FF;
-               end else if (color == 'h0000FF) begin
-                   color <= 'hFFFF00;
-               end else if (color == 'hFFFF00) begin
-                   color <= 'h00FFFF;
-               end else if (color == 'h00FFFF) begin
-                   color <= 'hFF00FF;
-               end else if (color == 'hFF00FF) begin
-                   color <= 'h010101;
-               end else if (color == 'h010101) begin
-                   color <= 'hFF0000;
-               end
-           end
+            address = address + 1;
+            if (address == NUM_LEDS) begin
+                address <= 0;
+                color_index <= color_index + 1;
+                case (color_index)
+                    0: color <= 'h100000;
+                    1: color <= 'h001000;
+                    2: color <= 'h000011;
+                    3: color <= 'h100010;
+                    4: color <= 'h101000;
+                    5: color <= 'h001010;
+                    6: color <= 'h101010;
+                    default: begin
+                        color <= 0;
+                        color_index <= 0;
+                    end
+                endcase
+            end
         end
     end
 
