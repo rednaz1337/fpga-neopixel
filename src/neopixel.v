@@ -58,7 +58,7 @@ module neopixel #(parameter NUM_LEDS=16)(input clk, output leds, input[23:0] col
 
         if (state == 1) begin // load next bit
             bit_idx = bit_idx + 1;
-            if (color_data[color_idx] & (1 << bit_idx))
+            if (color_data[color_idx] & ('b100000000000000000000000 >> bit_idx))
                 bit <= 1;
             else begin
                 bit <= 0;
@@ -74,7 +74,7 @@ module neopixel #(parameter NUM_LEDS=16)(input clk, output leds, input[23:0] col
 
         if (state == 2) begin // load next color
             color_idx = color_idx + 1;
-            if (color_data[color_idx] & (1 << 0))
+            if (color_data[color_idx] & ('b100000000000000000000000 >> 0))
                 bit <= 1;
             else begin
                 bit <= 0;

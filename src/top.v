@@ -53,8 +53,8 @@ module main #(parameter NUM_LEDS=64)(input clk, output leds, output led);
                end else if (color == 'h00FFFF) begin
                    color <= 'hFF00FF;
                end else if (color == 'hFF00FF) begin
-                   color <= 'hFFFFFF;
-               end else if (color == 'hFFFFFF) begin
+                   color <= 'h010101;
+               end else if (color == 'h010101) begin
                    color <= 'hFF0000;
                end
            end
