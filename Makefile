@@ -22,6 +22,9 @@ $(BUILD)/top.bit: $(BUILD)/top.config
 run: $(BUILD)/top.bit
 	openFPGALoader -c ft2232 $(BUILD)/top.bit
 
+flash: $(BUILD)/top.bit
+	ecpprog $(BUILD)/top.bit
+
 clean:
 	rm $(BUILD)/*
 
