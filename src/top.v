@@ -1,7 +1,7 @@
 `default_nettype none
 `include "src/neopixel.v"
 // clk needs to be about 25MHz
-module main #(parameter NUM_LEDS=150)(input clk, output leds, output led);
+module main #(parameter NUM_LEDS=150, parameter STEP_SIZE=3)(input clk, output leds, output led);
 
     wire clk;
     wire leds;
@@ -21,12 +21,12 @@ module main #(parameter NUM_LEDS=150)(input clk, output leds, output led);
     reg[15:0] address; 
     reg color_clock;
 
-    reg [9:0] anim_reg;
+    reg [8:0] anim_reg;
     reg anim_clock;
 
     initial begin
         color <= 'hFF0000;
-        address <= 0;
+        address <= NUM_LEDS;
         color_clock <= 0;
         anim_reg <= 0;
         anim_clock <= 0;
@@ -54,24 +54,24 @@ module main #(parameter NUM_LEDS=150)(input clk, output leds, output led);
     always @(posedge anim_clock) begin
         led_reg <= ~led_reg;
         color_clock <= ~color_clock;
-        if (color_clock == 1) begin
-            address <= address + 1;
-            if(address == NUM_LEDS) begin
-                address <= 0;
+        if (color_clock == 0) begin
+            address <= address - 1;
+            if(address == 0) begin
+                address <= NUM_LEDS;
 
                 if(start_red < 255 && start_green == 0 && start_blue == 0) begin
-                    start_red <= start_red + 15;
+                    start_red <= start_red + STEP_SIZE;
                 end else begin
                     if(start_green < 255 && start_blue == 0) begin
-                        start_green <= start_green + 15;
-                        start_red <= start_red - 15;
+                        start_green <= start_green + STEP_SIZE;
+                        start_red <= start_red - STEP_SIZE;
                     end else begin
                         if(start_blue < 255 && start_red == 0) begin
-                            start_blue <= start_blue + 15;
-                            start_green <= start_green - 15;
+                            start_blue <= start_blue + STEP_SIZE;
+                            start_green <= start_green - STEP_SIZE;
                         end else begin
-                            start_blue <= start_blue - 15;
-                            start_red <= start_red + 15;
+                            start_blue <= start_blue - STEP_SIZE;
+                            start_red <= start_red + STEP_SIZE;
                         end
                     end
                 end
@@ -83,18 +83,18 @@ module main #(parameter NUM_LEDS=150)(input clk, output leds, output led);
             end else begin
 
                 if(red < 255 && green == 0 && blue == 0) begin
-                    red <= red + 5;
+                    red <= red + STEP_SIZE;
                 end else begin
                     if(green < 255 && blue == 0) begin
-                        green <= green + 5;
-                        red <= red - 5;
+                        green <= green + STEP_SIZE;
+                        red <= red - STEP_SIZE;
                     end else begin
                         if(blue < 255 && red == 0) begin
-                            blue <= blue + 5;
-                            green = green - 5;
+                            blue <= blue + STEP_SIZE;
+                            green = green - STEP_SIZE;
                         end else begin
-                            blue <= blue - 5;
-                            red <= red + 5;
+                            blue <= blue - STEP_SIZE;
+                            red <= red + STEP_SIZE;
                         end
                     end
                 end
