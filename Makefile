@@ -28,5 +28,8 @@ flash: $(BUILD)/top.bit
 clean:
 	rm $(BUILD)/*
 
-sim:
+test.vcd:
 	iverilog -o testbench src/testbench.v && vvp testbench
+
+gui: test.vcd
+	gtkwave test.vcd
