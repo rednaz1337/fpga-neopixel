@@ -6,7 +6,8 @@ module tb_neopixel;
     wire leds;
 
     main neopixels (.clk(clk), .leds(leds));
-    //defparam neopixels.NUM_LEDS = 4;
+    defparam neopixels.NUM_LEDS = 4;
+    defparam neopixels.ANIM_REG_SIZE=1;
 
     always #20 clk = ~clk; // 25 MHz clock
 
@@ -15,7 +16,7 @@ module tb_neopixel;
         $dumpvars(0,tb_neopixel);
         clk <= 0;
 
-        #6000000 $finish;
+        #10000000 $finish;
     end
 
 endmodule

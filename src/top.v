@@ -1,7 +1,7 @@
 `default_nettype none
 `include "src/neopixel.v"
 // clk needs to be about 25MHz
-module main #(parameter NUM_LEDS=150, parameter STEP_SIZE=3)(input clk, output leds, output led);
+module main #(parameter NUM_LEDS=150, parameter STEP_SIZE=17, ANIM_REG_SIZE=9)(input clk, output leds, output led);
 
     wire clk;
     wire leds;
@@ -21,7 +21,7 @@ module main #(parameter NUM_LEDS=150, parameter STEP_SIZE=3)(input clk, output l
     reg[15:0] address; 
     reg color_clock;
 
-    reg [8:0] anim_reg;
+    reg [ANIM_REG_SIZE:0] anim_reg;
     reg anim_clock;
 
     initial begin
@@ -32,11 +32,11 @@ module main #(parameter NUM_LEDS=150, parameter STEP_SIZE=3)(input clk, output l
         anim_clock <= 0;
         led_reg <= 0;
         
-        red <= 0;
+        red <= 255;
         green <= 0;
         blue <= 0;
 
-        start_red <= 0;
+        start_red <= 255;
         start_green <= 0;
         start_blue <= 0;
     end
@@ -49,6 +49,7 @@ module main #(parameter NUM_LEDS=150, parameter STEP_SIZE=3)(input clk, output l
         if (anim_reg == 0) begin
             anim_clock = ~anim_clock;
         end
+
     end
 
     always @(posedge anim_clock) begin
@@ -58,22 +59,24 @@ module main #(parameter NUM_LEDS=150, parameter STEP_SIZE=3)(input clk, output l
             address <= address - 1;
             if(address == 0) begin
                 address <= NUM_LEDS;
-
-                if(start_red < 255 && start_green == 0 && start_blue == 0) begin
+                
+                if (start_red == 255 && start_blue == 0 && start_green < 255) begin
+                    start_green <= start_green + STEP_SIZE;
+                end
+                else if (start_green == 255 && start_blue == 0 && start_red > 0) begin
+                    start_red <= start_red - STEP_SIZE;
+                end
+                else if (start_red == 0 && start_green == 255 && start_blue < 255) begin
+                    start_blue <= start_blue + STEP_SIZE;
+                end
+                else if (start_red == 0 && start_blue == 255 && start_green > 0) begin
+                    start_green <= start_green - STEP_SIZE;
+                end
+                else if (start_blue == 255 && start_green == 0 && start_red < 255) begin
                     start_red <= start_red + STEP_SIZE;
-                end else begin
-                    if(start_green < 255 && start_blue == 0) begin
-                        start_green <= start_green + STEP_SIZE;
-                        start_red <= start_red - STEP_SIZE;
-                    end else begin
-                        if(start_blue < 255 && start_red == 0) begin
-                            start_blue <= start_blue + STEP_SIZE;
-                            start_green <= start_green - STEP_SIZE;
-                        end else begin
-                            start_blue <= start_blue - STEP_SIZE;
-                            start_red <= start_red + STEP_SIZE;
-                        end
-                    end
+                end
+                else if (start_red == 255 && start_green == 0 && start_blue > 0) begin
+                    start_blue <= start_blue - STEP_SIZE;
                 end
                 
                 red <= start_red;
@@ -82,21 +85,24 @@ module main #(parameter NUM_LEDS=150, parameter STEP_SIZE=3)(input clk, output l
 
             end else begin
 
-                if(red < 255 && green == 0 && blue == 0) begin
+                // modeled after this graphic: https://de.wikipedia.org/wiki/HSV-Farbraum#/media/Datei:HSV-RGB-comparison.svg
+                if (red == 255 && blue == 0 && green < 255) begin
+                    green <= green + STEP_SIZE;
+                end
+                else if (green == 255 && blue == 0 && red > 0) begin
+                    red <= red - STEP_SIZE;
+                end
+                else if (red == 0 && green == 255 && blue < 255) begin
+                    blue <= blue + STEP_SIZE;
+                end
+                else if (red == 0 && blue == 255 && green > 0) begin
+                    green <= green - STEP_SIZE;
+                end
+                else if (blue == 255 && green == 0 && red < 255) begin
                     red <= red + STEP_SIZE;
-                end else begin
-                    if(green < 255 && blue == 0) begin
-                        green <= green + STEP_SIZE;
-                        red <= red - STEP_SIZE;
-                    end else begin
-                        if(blue < 255 && red == 0) begin
-                            blue <= blue + STEP_SIZE;
-                            green = green - STEP_SIZE;
-                        end else begin
-                            blue <= blue - STEP_SIZE;
-                            red <= red + STEP_SIZE;
-                        end
-                    end
+                end
+                else if (red == 255 && green == 0 && blue > 0) begin
+                    blue <= blue - STEP_SIZE;
                 end
                 color <= (green << 16) | (red << 8) | blue;
                 

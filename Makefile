@@ -28,7 +28,7 @@ flash: $(BUILD)/top.bit
 clean:
 	rm $(BUILD)/*
 
-test.vcd:
+test.vcd: $(SOURCE_FILES)
 	iverilog -o testbench src/testbench.v && vvp testbench
 
 gui: test.vcd
